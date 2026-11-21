@@ -1,0 +1,60 @@
+fn foreignmiss_hasid(values: vector, key: f64) -> bool {
+    let mut i = 0;
+    while i < len(values) {
+        if at(values, i) == key {
+            return true;
+        }
+        i += 1;
+    }
+    false
+}
+
+fn foreignmiss_finite(values: vector) -> bool {
+    let mut i = 0;
+    while i < len(values) {
+        let value = at(values, i);
+        if !(value - value == 0.0) {
+            return false;
+        }
+        i += 1;
+    }
+    true
+}
+
+fn foreignmiss_integers(values: vector) -> bool {
+    let mut i = 0;
+    while i < len(values) {
+        let value = at(values, i);
+        if !(value >= -9007199254740991.0 && value <= 9007199254740991.0 && value % 1.0 == 0.0) {
+            return false;
+        }
+        i += 1;
+    }
+    true
+}
+
+fn foreignmiss_compute(parents: vector, children: vector) -> vector {
+    let mut count = 0;
+    let mut first = -1;
+    let mut i = 0;
+    while i < len(children) {
+        if !foreignmiss_hasid(parents, at(children, i)) {
+            if first < 0 {
+                first = i;
+            }
+            count += 1;
+        }
+        i += 1;
+    }
+    [count, first]
+}
+
+// Count child rows referencing absent numeric parent keys.
+// Returns [orphan rows, first orphan row]. Repeated child references are checked independently; represent missing/null separately.
+pub fn foreignmiss_count(parents: vector, children: vector) -> vector {
+    if !foreignmiss_integers(parents) { return []; }
+    if !foreignmiss_integers(children) { return []; }
+    let result = foreignmiss_compute(parents, children);
+    if !foreignmiss_finite(result) { return []; }
+    result
+}

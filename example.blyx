@@ -1,0 +1,13 @@
+use foreignmiss;
+
+fn main() {
+    let parents = [1, 3];
+    let children = [1, 2, 2];
+    let result = foreignmiss_count(parents, children);
+    if len(result) == 0 { println!("invalid"); return; }
+    let mut i = 0;
+    while i < len(result) {
+        println!(at(result, i));
+        i += 1;
+    }
+}
